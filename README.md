@@ -1,68 +1,323 @@
-# remote-mcp-server
+# Expense Tracker MCP Server
 
-# Simple Calculator MCP Server
+An async **Expense Tracker backend** built with **FastMCP + SQLite + aiosqlite**, designed to work as an MCP server for AI agents (Claude, ChatGPT, MCP Inspector, Streamlit chatbot, etc.).
 
-A minimal FastMCP server that exposes basic math tools and one JSON resource over `streamable-http`.
+This project supports:
 
-## Features
+- Add expense
+- Add credit/income
+- Edit transactions
+- Delete transactions
+- Filter/list transactions
+- Summarize expenses
+- Category-wise analytics
+- Daily trend analytics
+- Monthly summaries
 
-- `add(a, b)` -> returns the sum of two integers
-- `subtract(a, b)` -> returns `a - b`
-- `multiply(a, b)` -> returns `a * b`
-- `random_number(min_val=1, max_val=100)` -> returns a random integer in range
-- `info://server` resource -> server metadata in JSON
+---
 
-Implementation: [main.py](main.py)
+# Features
 
-## Requirements
+## Transaction Management
 
-- Python `>=3.14`
-- Dependency: `fastmcp>=3.3.1`
+Users can:
 
-Project metadata: [pyproject.toml](pyproject.toml)
+- Log expenses
+- Log credits/income (salary, refund, etc.)
+- Edit existing transactions
+- Delete transactions
+- List transactions with filters
 
-## Setup
+---
 
-Using `uv` (recommended):
+## Filters Supported
+
+Transactions can be filtered by:
+
+- Date range
+- Transaction type (`expense` / `credit`)
+- Category
+- User
+
+---
+
+## Analytics
+
+Built-in analytics include:
+
+- Total expenses
+- Total credits
+- Balance
+- Category-wise spending
+- Daily spending trend
+- Monthly summary
+
+---
+
+## Async Architecture
+
+Built using async Python:
+
+- `FastMCP`
+- `aiosqlite`
+
+Supports multiple users making requests concurrently.
+
+---
+
+## MCP Tools Exposed
+
+| Tool | Description |
+|---|---|
+| `initialize_database` | Create DB tables |
+| `register_user` | Register new user |
+| `add_expense` | Add expense transaction |
+| `add_credit` | Add income/credit |
+| `get_transactions` | Filter/list transactions |
+| `edit_transaction` | Update transaction |
+| `remove_transaction` | Delete transaction |
+| `expense_summary` | Overall summary |
+| `category_summary` | Category analytics |
+| `daily_summary` | Daily trend |
+| `monthly_summary` | Monthly report |
+
+---
+
+# Project Structure
+
+```text
+expense-tracker/
+│
+├── db.py              # Database setup
+├── models.py          # Pydantic models
+├── crud.py            # CRUD operations
+├── analytics.py       # Summary and analytics
+├── mcp_server.py      # FastMCP server
+├── app.py             # Streamlit UI (optional)
+├── requirements.txt
+├── pyproject.toml
+├── README.md
+```
+
+---
+
+# Database Schema
+
+## Users table
+
+Stores:
+
+- user id
+- username
+- email
+- created timestamp
+
+---
+
+## Transactions table
+
+Stores:
+
+- transaction id
+- user id
+- amount
+- type (`expense` / `credit`)
+- category
+- note
+- transaction date
+- timestamps
+
+---
+
+# Installation
+
+## Clone repo
+
+```bash
+git clone <repo-url>
+cd remote-mcp-server
+```
+
+---
+
+## Create environment
+
+### Using uv
 
 ```bash
 uv sync
 ```
 
-## Run The Server
+---
+
+### Or pip
 
 ```bash
-uv run python main.py
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+
+pip install -r requirements.txt
 ```
 
-The server starts with:
+---
 
-- transport: `streamable-http`
-- host: `0.0.0.0`
-- port: `8000`
-
-## Development (Inspector)
-
-If you want to inspect tools/resources during development:
+# Run MCP Server
 
 ```bash
-uv run fastmcp dev inspector main.py
+uv run mcp_server.py
 ```
 
-## Available API Surface
+or
 
-### Tools
+```bash
+python mcp_server.py
+```
 
-1. `add(a: int, b: int) -> int`
-2. `random_number(min_val: int = 1, max_val: int = 100) -> int`
-3. `multiply(a: int, b: int) -> int`
-4. `subtract(a: int, b: int) -> int`
+---
 
-### Resource
+# Test with MCP Inspector
 
-- `info://server` (`application/json`)
+```bash
+uv run fastmcp dev inspector
+```
 
-## Notes
+Use:
 
-- This project is intentionally small and easy to extend.
-- Add more tools in [main.py](main.py) using the `@mcp.tool()` decorator.
+- Transport: `STDIO`
+- Command:
+
+```text
+python
+```
+
+Arguments:
+
+```text
+mcp_server.py
+```
+
+---
+
+# Deploy to FastMCP Cloud
+
+Login:
+
+```bash
+uv run fastmcp login
+```
+
+Deploy:
+
+```bash
+uv run fastmcp deploy mcp_server.py
+```
+
+FastMCP returns a remote URL like:
+
+```text
+https://your-server.fastmcp.app/mcp
+```
+
+---
+
+# Example MCP Usage
+
+## Register user
+
+```text
+Register user:
+username = anubhav
+email = abc@gmail.com
+```
+
+---
+
+## Add expense
+
+```text
+Add expense:
+500
+category = dining
+note = with family
+```
+
+---
+
+## Add credit
+
+```text
+Add credit:
+50000
+category = salary
+```
+
+---
+
+## Summary
+
+```text
+Show my expense summary
+```
+
+Returns:
+
+```json
+{
+  "total_expense": 5000,
+  "total_credit": 50000,
+  "balance": 45000
+}
+```
+
+---
+
+# Tech Stack
+
+- Python
+- FastMCP
+- SQLite
+- aiosqlite
+- Pydantic
+- Streamlit
+- Plotly
+- LangChain MCP Adapters
+
+---
+
+# Notes
+
+## SQLite warning
+
+SQLite works well for demo/local use.
+
+For production, consider:
+
+- Supabase
+- Neon Postgres
+- Turso
+
+because cloud containers may reset local DB files.
+
+---
+
+# Future Improvements
+
+- Authentication
+- User login
+- Budget alerts
+- AI chatbot front-end
+- Dashboard charts
+- Recurring transactions
+- Export to CSV/PDF
+
+---
+
+# Author
+
+Built as a learning project for:
+
+- MCP
+- Async Python
+- SQLite
+- AI tool calling
+- Streamlit integrations
