@@ -7,3 +7,10 @@ langchain-mcp-adapters
 python-dotenv
 pydantic
 pandas
+fastmcp
+aiosqlite
+streamlit
+plotly
+pydantic
+python-dotenv
+pandas
