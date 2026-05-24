@@ -1,0 +1,9 @@
+fastmcp
+aiosqlite
+streamlit
+plotly
+langchain-openai
+langchain-mcp-adapters
+python-dotenv
+pydantic
+pandas
